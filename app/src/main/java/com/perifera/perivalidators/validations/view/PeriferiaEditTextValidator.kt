@@ -8,7 +8,7 @@ import com.perifera.perivalidators.validations.GeneralValidations
 
 import java.io.Console
 
-open class PeriferiaEditTextValidator {
+
 
 
     /**
@@ -51,4 +51,3 @@ open class PeriferiaEditTextValidator {
                 }.check()
     }
 
-}
