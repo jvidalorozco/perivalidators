@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-group='com.perifera.perivalidators'
+
 
 android {
     compileSdkVersion 29
@@ -15,6 +15,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro' //added this line
         }
     }
 }
