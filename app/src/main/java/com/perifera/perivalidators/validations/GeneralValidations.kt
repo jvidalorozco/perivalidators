@@ -39,6 +39,7 @@ class GeneralValidations(var text: String) {
         return this
     }
 
+
     /**
      * Agrega el mensaje de error a la lista
      * @author Cristian S
