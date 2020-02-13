@@ -64,19 +64,12 @@ import java.util.*
         val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
         var myFormattedPrice : String = ""
 
-        this.addTextChangedListener(object: TextWatcher {override fun afterTextChanged(s: Editable?) {
 
-        }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                 try {
 
                     // Use the number format for the locale.
-                    var mInputQuantity = mNumberFormat.parse(s?.toString()).toInt()
+                    var mInputQuantity = mNumberFormat.parse(this.text.toString()).toInt()
 
                     // TODO: Set up the price and currency format.
 
@@ -105,14 +98,10 @@ import java.util.*
 
                     setText(myFormattedPrice)
 
-                } catch ( e: ParseException) {
+                } catch (e: ParseException) {
                     e.printStackTrace()
 
                 }
-            }
-
-        })
-
 
 
     }
