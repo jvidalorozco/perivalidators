@@ -6,7 +6,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
-import com.perifera.perivalidators.utils.getLocale
+import com.perifera.perivalidators.utils.Util
+
 import com.perifera.perivalidators.validations.GeneralValidations
 
 import java.io.Console
@@ -57,9 +58,9 @@ import java.text.ParseException
 
 
     fun EditText.formatMoney(){
-
-        val mNumberFormat  = NumberFormat.getNumberInstance(getLocale(context))
-        val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
+        val util = Util()
+        val mNumberFormat  = NumberFormat.getNumberInstance(util.getLocale(context))
+        val mCurrencyFormat = NumberFormat.getCurrencyInstance(util.getLocale(context))
         var myFormattedPrice : String = ""
 
         this.addTextChangedListener(object: TextWatcher {override fun afterTextChanged(s: Editable?) {
