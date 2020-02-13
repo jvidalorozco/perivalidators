@@ -1,18 +1,19 @@
-
-
 package com.perifera.perivalidators.validations.view
 
+import android.content.Context
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
-import com.perifera.perivalidators.utils.Util
+
 
 import com.perifera.perivalidators.validations.GeneralValidations
 
 import java.io.Console
 import java.text.NumberFormat
 import java.text.ParseException
+import java.util.*
 
 
 /**
@@ -58,9 +59,9 @@ import java.text.ParseException
 
 
     fun EditText.formatMoney(){
-        val util = Util()
-        val mNumberFormat  = NumberFormat.getNumberInstance(util.getLocale(context))
-        val mCurrencyFormat = NumberFormat.getCurrencyInstance(util.getLocale(context))
+
+        val mNumberFormat  = NumberFormat.getNumberInstance(getLocale(context))
+        val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
         var myFormattedPrice : String = ""
 
         this.addTextChangedListener(object: TextWatcher {override fun afterTextChanged(s: Editable?) {
@@ -116,3 +117,16 @@ import java.text.ParseException
 
     }
 
+fun getSymbol(context: Context): String {
+    val currency = Currency.getInstance(getLocale(context))
+
+    return currency.symbol
+}
+
+fun getLocale(ctx: Context): Locale {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        ctx.resources.configuration.locales.get(0)
+    } else {
+        ctx.resources.configuration.locale
+    }
+}
