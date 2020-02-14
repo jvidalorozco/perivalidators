@@ -69,7 +69,7 @@ import java.util.*
                 try {
 
                     // Use the number format for the locale.
-                    var mInputQuantity = mNumberFormat.parse(text).toInt()
+                    var mInputQuantity = mNumberFormat.parse(text).toDouble()
 
                     // TODO: Set up the price and currency format.
 
@@ -113,7 +113,7 @@ fun EditText.onTextChanged(afterTextChanged: (String) -> Unit) {
         }
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            afterTextChanged.invoke(formatMoney(context,p0.toString()))
+            afterTextChanged.invoke(formatMoney(context,p0.toString().replace(getSymbol(context),"")))
         }
 
         override fun afterTextChanged(editable: Editable?) {
