@@ -58,7 +58,7 @@ import java.util.*
 
 
 
-    fun EditText.formatMoney(){
+    fun formatMoney(context: Context, text: String) : String{
 
         val mNumberFormat  = NumberFormat.getNumberInstance(getLocale(context))
         val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
@@ -69,7 +69,7 @@ import java.util.*
                 try {
 
                     // Use the number format for the locale.
-                    var mInputQuantity = mNumberFormat.parse(this.text.toString()).toInt()
+                    var mInputQuantity = mNumberFormat.parse(text).toInt()
 
                     // TODO: Set up the price and currency format.
 
@@ -96,15 +96,31 @@ import java.util.*
 
                     myFormattedPrice = mCurrencyFormat.format(mInputQuantity)
 
-                    setText(myFormattedPrice)
+
+                    return myFormattedPrice
 
                 } catch (e: ParseException) {
                     e.printStackTrace()
 
                 }
 
-
+        return text
     }
+
+fun EditText.onTextChanged(afterTextChanged: (String) -> Unit) {
+    this.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            afterTextChanged.invoke(formatMoney(context,p0.toString()))
+        }
+
+        override fun afterTextChanged(editable: Editable?) {
+
+        }
+    })
+}
 
 fun getSymbol(context: Context): String {
     val currency = Currency.getInstance(getLocale(context))
