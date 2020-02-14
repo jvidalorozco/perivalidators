@@ -58,42 +58,30 @@ import java.util.*
     }
 
 
-fun TextView.currencyFormat() {
-    val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
-    addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {}
+    fun TextView.currencyFormat() {
+        val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
+        addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
 
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            removeTextChangedListener(this)
-            text = if (s?.toString().isNullOrBlank()) {
-                ""
-            } else {
-                mCurrencyFormat.format(s.toString().currencyFormat(context))
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                removeTextChangedListener(this)
+                text = if (s?.toString().isNullOrBlank()) {
+                    ""
+                } else {
+                    formatMoney(context,s.toString())
 
+                }
+                if(this@currencyFormat is EditText){
+                    setSelection(text.toString().length)
+                }
+                addTextChangedListener(this)
             }
-            if(this@currencyFormat is EditText){
-                setSelection(text.toString().length)
-            }
-            addTextChangedListener(this)
-        }
-    })
-}
-
-fun String.currencyFormat(context: Context): String {
-    var current = this
-    if (current.isEmpty()) current = "0"
-    return try {
-        if (current.contains('.')) {
-            NumberFormat.getNumberInstance(Locale.getDefault()).format(current.replace(getSymbol(context),"").replace(",", "").toDouble())
-        } else {
-            NumberFormat.getNumberInstance(Locale.getDefault()).format(current.replace(getSymbol(context),"").replace(",", "").toLong())
-        }
-    } catch (e: Exception) {
-        "0"
+        })
     }
-}
+
+
 
 
 
@@ -102,7 +90,8 @@ fun String.currencyFormat(context: Context): String {
         val mNumberFormat  = NumberFormat.getNumberInstance(getLocale(context))
         val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
         var myFormattedPrice : String = ""
-
+        var text = text.replace(",","")
+        text = text.replace(getSymbol(context),"")
 
 
                 try {
