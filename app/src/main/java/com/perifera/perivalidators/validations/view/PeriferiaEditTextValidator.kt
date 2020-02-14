@@ -20,7 +20,7 @@ import java.util.*
 
 
 /**
-     * Retorna el valor del EditText
+* Retorna el valor del EditText
      * @version 1.0
      * @author Cristian S
      * @date 2019/12/05
@@ -60,8 +60,15 @@ import java.util.*
     }
 
 
-
-fun EditText.setMaskingMoney(currencyText: String) {
+/**
+ * Verifica si es valida la moneda
+ * @version 1.0
+ * @author Jorge V
+ * @date 2020/02/14
+ * @param symbol simbolo de la moneda actual del dispositivo
+ * @param pattern patron de formateo de moneda
+ */
+fun EditText.setMaskingMoney(symbol: String, pattern: String) {
     this.addTextChangedListener(object: CustomTextWatcher{
         val editTextWeakReference: WeakReference<EditText> = WeakReference(this@setMaskingMoney)
         override fun afterTextChanged(editable: Editable?) {
@@ -69,7 +76,7 @@ fun EditText.setMaskingMoney(currencyText: String) {
             val s = editable.toString()
             editText.removeTextChangedListener(this)
             val cleanString = s.replace("["+getSymbol(context)+",.]".toRegex(), "")
-            val newval = currencyText + cleanString.monetize(context)
+            val newval = symbol + cleanString.monetize(context,pattern)
 
             editText.setText(newval)
             editText.setSelection(newval.length)
@@ -79,28 +86,50 @@ fun EditText.setMaskingMoney(currencyText: String) {
 }
 
 
+/**
+ * Interfaz del textwatcher
+ * @version 1.0
+ * @author Jorge V
+ * @date 2020/02/14
+ */
 interface CustomTextWatcher: TextWatcher {
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 }
 
 
-fun String.monetize(context: Context): String{
+/**
+ * aplicar el patron de la moneda
+ * @version 1.0
+ * @author Jorge V
+ * @date 2020/02/14
+ */
+fun String.monetize(context: Context, pattern: String): String{
     if (this.isEmpty() || this.equals(getSymbol(context))) {
         return ""
     }
-    return DecimalFormat("#,###").format(this.replace("[^\\d]".toRegex(), "").toLong())
+    return DecimalFormat(pattern).format(this.replace("[^\\d]".toRegex(), "").toLong())
 }
 
 
-
-
+/**
+ * Obtiene el simbolo de la moneda de la region
+ * @version 1.0
+ * @author Jorge V
+ * @date 2020/02/14
+ */
 fun getSymbol(context: Context): String {
     val currency = Currency.getInstance(getLocale(context))
 
     return currency.symbol
 }
 
+/**
+ * Obtiene la configuracion local del dispositivo
+ * @version 1.0
+ * @author Jorge V
+ * @date 2020/02/14
+ */
 fun getLocale(ctx: Context): Locale {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         ctx.resources.configuration.locales.get(0)
