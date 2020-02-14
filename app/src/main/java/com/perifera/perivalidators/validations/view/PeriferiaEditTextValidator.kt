@@ -59,6 +59,7 @@ import java.util.*
 
 
 fun TextView.currencyFormat() {
+    val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
     addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {}
 
@@ -69,7 +70,8 @@ fun TextView.currencyFormat() {
             text = if (s?.toString().isNullOrBlank()) {
                 ""
             } else {
-                s.toString().currencyFormat()
+                mCurrencyFormat.format(s.toString().currencyFormat(context))
+
             }
             if(this@currencyFormat is EditText){
                 setSelection(text.toString().length)
@@ -79,14 +81,14 @@ fun TextView.currencyFormat() {
     })
 }
 
-fun String.currencyFormat(): String {
+fun String.currencyFormat(context: Context): String {
     var current = this
     if (current.isEmpty()) current = "0"
     return try {
         if (current.contains('.')) {
-            NumberFormat.getNumberInstance(Locale.getDefault()).format(current.replace(",", "").toDouble())
+            NumberFormat.getNumberInstance(Locale.getDefault()).format(current.replace(getSymbol(context),"").replace(",", "").toDouble())
         } else {
-            NumberFormat.getNumberInstance(Locale.getDefault()).format(current.replace(",", "").toLong())
+            NumberFormat.getNumberInstance(Locale.getDefault()).format(current.replace(getSymbol(context),"").replace(",", "").toLong())
         }
     } catch (e: Exception) {
         "0"
