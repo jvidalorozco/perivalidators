@@ -12,6 +12,8 @@ import android.widget.TextView
 import com.perifera.perivalidators.validations.GeneralValidations
 
 import java.io.Console
+import java.lang.ref.WeakReference
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.ParseException
 import java.util.*
@@ -58,97 +60,40 @@ import java.util.*
     }
 
 
-    fun TextView.currencyFormat() {
-        val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
-        addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                removeTextChangedListener(this)
-                text = if (s?.toString().isNullOrBlank()) {
-                    ""
-                } else {
-                    formatMoney(context,s.toString())
-
-                }
-                if(this@currencyFormat is EditText){
-                    setSelection(text.toString().length)
-                }
-                addTextChangedListener(this)
-            }
-        })
-    }
-
-
-
-
-
-    fun formatMoney(context: Context, text: String) : String{
-
-        val mNumberFormat  = NumberFormat.getNumberInstance(getLocale(context))
-        val mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale(context))
-        var myFormattedPrice : String = ""
-        var text = text.replace(",","")
-        text = text.replace(getSymbol(context),"")
-
-
-                try {
-
-                    // Use the number format for the locale.
-                    var mInputQuantity = mNumberFormat.parse(text).toDouble()
-
-                    // TODO: Set up the price and currency format.
-
-                    /*var deviceLocale = Locale.getDefault().country
-                    // If country code is France or Israel, calculate price
-                    // with exchange rate and change to the country's currency format.
-                    if (deviceLocale.equals("FR") || deviceLocale.equals("IL")) {
-                        if (deviceLocale.equals("FR")) {
-                            // Calculate mPrice in euros.
-                            mPrice *= mFrExchangeRate
-                        } else {
-                            // Calculate mPrice in new shekels.
-                            mPrice *= mIwExchangeRate;
-                        }
-                        // Use the user-chosen locale's currency format, which
-                        // is either France or Israel.
-                        myFormattedPrice = mCurrencyFormat.format(mInputQuantity)
-                    } else {
-                        // mPrice is the same (based on U.S. dollar).
-                        // Use the currency format for the U.S.
-                        mCurrencyFormat = NumberFormat.getCurrencyInstance(getLocale())
-                        myFormattedPrice = mCurrencyFormat.format(mInputQuantity)
-                    }*/
-
-                    myFormattedPrice = mCurrencyFormat.format(mInputQuantity)
-
-
-                    return myFormattedPrice
-
-                } catch (e: ParseException) {
-                    e.printStackTrace()
-
-                }
-
-        return text
-    }
-
-fun EditText.onTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            afterTextChanged.invoke(formatMoney(context,p0.toString().replace(getSymbol(context),"")))
-        }
-
+fun EditText.setMaskingMoney(currencyText: String) {
+    this.addTextChangedListener(object: CustomTextWatcher{
+        val editTextWeakReference: WeakReference<EditText> = WeakReference(this@setMaskingMoney)
         override fun afterTextChanged(editable: Editable?) {
+            val editText = editTextWeakReference.get() ?: return
+            val s = editable.toString()
+            editText.removeTextChangedListener(this)
+            val cleanString = s.replace("["+getSymbol(context)+",.]".toRegex(), "")
+            val newval = currencyText + cleanString.monetize(context)
 
+            editText.setText(newval)
+            editText.setSelection(newval.length)
+            editText.addTextChangedListener(this)
         }
     })
 }
+
+
+interface CustomTextWatcher: TextWatcher {
+    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+}
+
+
+fun String.monetize(context: Context): String{
+    if (this.isEmpty() || this.equals(getSymbol(context))) {
+        return ""
+    }
+    return DecimalFormat("#,###").format(this.replace("[^\\d]".toRegex(), "").toLong())
+}
+
+
+
 
 fun getSymbol(context: Context): String {
     val currency = Currency.getInstance(getLocale(context))
