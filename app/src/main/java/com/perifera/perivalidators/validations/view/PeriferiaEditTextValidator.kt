@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
+import android.widget.TextView
 
 
 import com.perifera.perivalidators.validations.GeneralValidations
@@ -55,6 +56,42 @@ import java.util.*
                     onFailure.invoke(it)
                 }.check()
     }
+
+
+fun TextView.currencyFormat() {
+    addTextChangedListener(object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {}
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            removeTextChangedListener(this)
+            text = if (s?.toString().isNullOrBlank()) {
+                ""
+            } else {
+                s.toString().currencyFormat()
+            }
+            if(this@currencyFormat is EditText){
+                setSelection(text.toString().length)
+            }
+            addTextChangedListener(this)
+        }
+    })
+}
+
+fun String.currencyFormat(): String {
+    var current = this
+    if (current.isEmpty()) current = "0"
+    return try {
+        if (current.contains('.')) {
+            NumberFormat.getNumberInstance(Locale.getDefault()).format(current.replace(",", "").toDouble())
+        } else {
+            NumberFormat.getNumberInstance(Locale.getDefault()).format(current.replace(",", "").toLong())
+        }
+    } catch (e: Exception) {
+        "0"
+    }
+}
 
 
 
