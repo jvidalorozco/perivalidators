@@ -14,6 +14,7 @@ import com.perifera.perivalidators.validations.GeneralValidations
 import java.io.Console
 import java.lang.ref.WeakReference
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.text.ParseException
 import java.util.*
@@ -49,8 +50,8 @@ import java.util.*
      * @author Cristian S
      * @date 2019/12/05
      */
-    fun EditText.validCoin(simbol: String, onFailure: (message: String) -> Unit, onSuccess: (data: Any) -> Unit): Boolean {
-        return validator().validNumber(simbol)
+    fun EditText.validCoin(onFailure: (message: String) -> Unit, onSuccess: (data: Any) -> Unit): Boolean {
+        return validator().validNumber(getSeparatorMiles(),getSymbol(this.context))
                 .addSuccessCallback {
                     onSuccess(it)
                 }
@@ -136,4 +137,15 @@ fun getLocale(ctx: Context): Locale {
     } else {
         ctx.resources.configuration.locale
     }
+}
+
+
+/**
+ * Obtiene el separador de miles
+ * @version 1.0
+ * @author Jorge V
+ * @date 2020/02/15
+ */
+fun getSeparatorMiles(): String{
+    return DecimalFormatSymbols.getInstance().decimalSeparator.toString()
 }

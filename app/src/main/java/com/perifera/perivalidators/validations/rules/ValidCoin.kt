@@ -9,7 +9,7 @@ import com.perifera.perivalidators.validations.GeneralValidations
 import java.util.*
 import javax.xml.validation.Validator
 
-class ValidCoin (var simbol : String,var errorMsg: String = "Moneda Invalida", var data: Any = "") : BaseRuleWithData{
+class ValidCoin (val separator: String,val simbol : String,var errorMsg: String = "Moneda Invalida", var data: Any = "") : BaseRuleWithData{
 
 
     override fun getSuccessData(): Any = data
@@ -27,19 +27,11 @@ class ValidCoin (var simbol : String,var errorMsg: String = "Moneda Invalida", v
          * Verificar si la cadena tiene caracteres especiales
          */
 
-        if (text.startsWith(simbol))
-        {
+        if (text.contains(simbol)) {
             res = text.replace(simbol, "")
-
-            if (res.contains(".")) {
-                res = res.replace(".", ",")
-                return GeneralValidations(res).regex("^[0-9]+([,][0-9]+)?\$").check()
-            } else {
-                return GeneralValidations(res).regex("^[0-9]+([,][0-9]+)?\$").check()
-            }
-        }else{
-            return GeneralValidations(res).regex("^[0-9]+([,][0-9]+)?\$").check()
         }
+
+        return GeneralValidations(res).regex("^[0-9]+([${separator}][0-9]+)?\$").check()
     }
 
     override fun getErrorMessage(): String = errorMsg

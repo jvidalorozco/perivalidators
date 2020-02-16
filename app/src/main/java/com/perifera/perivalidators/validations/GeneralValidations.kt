@@ -87,9 +87,9 @@ class GeneralValidations(var text: String) {
 
         // llamando los callbacks
         if (isValid) {
-            if(text.startsWith("$")) {
+            /*if(text.startsWith("$")) {
                 text = text.replace("$", "")
-            }
+            }*/
             successCallback?.invoke(text)
         }
         else {
@@ -105,9 +105,9 @@ class GeneralValidations(var text: String) {
      * @date 2019/12/05
      * @return error cuando los campos esten vacios
      * */
-    fun validNumber(simbol: String,errorMsg:String? = null) : GeneralValidations
+    fun validNumber(separator: String,simbol: String,errorMsg:String? = null) : GeneralValidations
     {
-        val rule = errorMsg?.let { ValidCoin(simbol,errorMsg) }?: ValidCoin(simbol)
+        val rule = errorMsg?.let { ValidCoin(simbol,errorMsg) }?: ValidCoin(simbol, separator)
         addRule(rule)
         return this
     }

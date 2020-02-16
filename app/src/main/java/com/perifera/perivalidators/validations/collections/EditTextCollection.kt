@@ -36,7 +36,7 @@ fun Any.validMoney(simbol: String,vararg editTextList: EditText, onFailure: (vie
     var result = false
     for (edittext in editTextList)
     {
-        result = edittext.validCoin ( simbol,{
+        result = edittext.validCoin ({
             onFailure.invoke(edittext, it)
         },{
             onSuccess.invoke(edittext,it)
